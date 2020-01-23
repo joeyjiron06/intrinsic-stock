@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   input: {
+    textTransform: 'uppercase',
     maxWidth: 400,
     marginBottom: 30
   }
@@ -50,11 +51,10 @@ export default ({ match }) => {
 
   function onKeyDown(event) {
     if (event.keyCode === 13) {
-      console.log('keydown', {
-        key: event.key,
-        code: event.keyCode,
-        value: event.target.value
-      });
+      // refresh the page so we don't have to deal with clearning state
+      window.location.href = `${
+        window.location.origin
+      }/stock/${encodeURIComponent(event.target.value)}`;
     }
   }
 
