@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import { FormInput } from 'shards-react';
 import { Chart } from 'react-charts';
+import LineGraph from '../components/lineGraph';
 import {
   fetchFinancialRatios,
   fetchCompanyProfile
@@ -104,38 +105,38 @@ export default ({ match }) => {
         </div>
       )}
 
+      {/* TODO double check that these graphs represent what they mention in the investment videos */}
       {financialRatios && (
         <div>
-          <div
-            style={{
-              width: '400px',
-              height: '300px'
-            }}
-          >
-            <Chart
-              data={[
-                {
-                  label: 'Debt to Equity Ratio',
-                  datums: financialRatios.map(ratio => ({
-                    x: new Date(ratio.date).getTime(),
-                    y: ratio.debtRatios.debtEquityRatio
-                  }))
-                }
-              ]}
-              series={{
-                showPoints: false
-              }}
-              axes={[
-                { primary: true, type: 'time', position: 'bottom' },
-                { type: 'linear', position: 'left' }
-              ]}
-              tooltip
-              primaryCursor
-              secondaryCursor
-            />
+          <LineGraph
+            label="Price to Earnings Ratio"
+            datums={financialRatios.map(ratio => ({
+              x: new Date(ratio.date).getTime(),
+              y: ratio.investmentValuationRatios.priceEarningsRatio
+            }))}
+          />
+          <LineGraph
+            label="Price to Book Value Ratio"
+            datums={financialRatios.map(ratio => ({
+              x: new Date(ratio.date).getTime(),
+              y: ratio.investmentValuationRatios.priceToBookRatio
+            }))}
+          />
+          <LineGraph
+            label="Debt to Equity Ratio"
+            datums={financialRatios.map(ratio => ({
+              x: new Date(ratio.date).getTime(),
+              y: ratio.debtRatios.debtEquityRatio
+            }))}
+          />
 
-            <h5>Debt to Equity Ratio</h5>
-          </div>
+          <LineGraph
+            label="Dividend Yield"
+            datums={financialRatios.map(ratio => ({
+              x: new Date(ratio.date).getTime(),
+              y: ratio.investmentValuationRatios.dividendYield || 0
+            }))}
+          />
         </div>
       )}
     </div>
