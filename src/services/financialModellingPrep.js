@@ -20,8 +20,20 @@ export function fetchFinancialRatios(tickerSymbol) {
   );
 }
 
-export async function fetchCompanyProfile(tickerSymbol) {
+export function fetchCompanyProfile(tickerSymbol) {
   return getOrFetch(
     `https://financialmodelingprep.com/api/v3/company/profile/${tickerSymbol}`
+  );
+}
+
+export function fetchKeyMetrics(tickerSymbol) {
+  return getOrFetch(
+    `https://financialmodelingprep.com/api/v3/company-key-metrics/${tickerSymbol}`
+  );
+}
+
+export async function fetchIncomeStatement(tickerSymbol) {
+  return getOrFetch(
+    `https://financialmodelingprep.com/api/v3/financials/income-statement/${tickerSymbol}`
   );
 }
