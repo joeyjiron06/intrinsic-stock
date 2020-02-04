@@ -37,3 +37,11 @@ export async function fetchIncomeStatement(tickerSymbol) {
     `https://financialmodelingprep.com/api/v3/financials/income-statement/${tickerSymbol}`
   );
 }
+
+export async function searchTicker(tickerSymbolOrCompanyName) {
+  return getOrFetch(
+    `https://financialmodelingprep.com/api/v3/search?query=${encodeURIComponent(
+      tickerSymbolOrCompanyName
+    )}&limit=10`
+  );
+}

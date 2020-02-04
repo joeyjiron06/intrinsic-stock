@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
-import { FormInput } from 'shards-react';
+import TickerInput from '../components/tickerInput';
 import LineGraph from '../components/lineGraph';
 import {
   fetchCompanyProfile,
@@ -68,6 +68,8 @@ export default ({ match }) => {
         fetch10YearFederalNoteYield()
       ]);
 
+      // TODO deal with nulls
+
       const bookValues = keyMetrics.metrics.map(
         metric => Number(metric['Book Value per Share']) || 0
       );
@@ -93,17 +95,11 @@ export default ({ match }) => {
     return () => {};
   }, []);
 
-  function onKeyDown(event) {
-    if (event.keyCode === 13) {
-      // refresh the page so we don't have to deal with clearning state
-      window.location.href = `${
-        window.location.origin
-      }/stock/${encodeURIComponent(event.target.value)}`;
-    }
-  }
-
-  function onChange(event) {
-    setTickerSymbol(event.target.value);
+  function onSelect(symbol) {
+    // refresh the page so we don't have to deal with clearning state
+    window.location.href = `${
+      window.location.origin
+    }/stock/${encodeURIComponent(symbol)}`;
   }
 
   return (
@@ -111,13 +107,10 @@ export default ({ match }) => {
       <h1>
         <b>Intrinsic</b> Stock
       </h1>
-      <FormInput
-        size="lg"
-        placeholder="Find Stock"
+      <TickerInput
         className={css(styles.input)}
-        value={tickerSymbol}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
+        onSelect={onSelect}
+        intialText={tickerSymbol}
       />
 
       {profile && (
@@ -136,7 +129,7 @@ export default ({ match }) => {
 
           <div>
             <h3>${profile.price.toFixed(1)}</h3>
-            <p>currnet price</p>
+            <p>current price</p>
           </div>
         </div>
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
-import { FormInput } from 'shards-react';
+import TickerInput from '../components/tickerInput';
 
 const styles = StyleSheet.create({
   root: {
@@ -15,11 +15,8 @@ const styles = StyleSheet.create({
 });
 
 export default ({ history }) => {
-  function onKeyDown(event) {
-    // enter was pressed
-    if (event.keyCode === 13) {
-      history.replace(`/stock/${event.target.value}`);
-    }
+  function onSelect(tickerSymbol) {
+    history.push(`/stock/${tickerSymbol}`);
   }
 
   return (
@@ -28,11 +25,11 @@ export default ({ history }) => {
         <b>Intrinsic</b> Stock
       </h1>
       <p>find the intrinsic value of a stock</p>
-      <FormInput
+      <TickerInput
         size="lg"
         placeholder="Find Stock"
         className={css(styles.input)}
-        onKeyDown={onKeyDown}
+        onSelect={onSelect}
       />
     </div>
   );
