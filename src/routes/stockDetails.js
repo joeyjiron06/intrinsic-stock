@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import TickerInput from '../components/tickerInput';
 import LineGraph from '../components/lineGraph';
+import { Container, Col, Row } from 'shards-react';
 import {
   fetchCompanyProfile,
   fetchKeyMetrics,
-  fetchIncomeStatement
+  fetchIncomeStatement,
+  fetchFinancialRatios
 } from '../services/financialModellingPrep';
 import { fetch10YearFederalNoteYield } from '../services/usTreasury';
 
 const styles = StyleSheet.create({
   root: {
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+    padding: 40
+    // textAlign: 'center',
+    // display: 'flex',
+    // flexDirection: 'column',
+    // alignItems: 'center'
   },
   input: {
     textTransform: 'uppercase',
@@ -48,9 +51,10 @@ function calculateIntrinsicValue(
 }
 
 export default ({ match }) => {
-  const [tickerSymbol, setTickerSymbol] = useState(match.params.tickerSymbol);
+  const [tickerSymbol] = useState(match.params.tickerSymbol);
   const [profile, setProfile] = useState(null);
   const [intrinsicPrice, setIntrinsicPrice] = useState(null);
+  const [financialRatios, setFinancialRatios] = useState(null);
   const [keyMetrics, setKeyMetrics] = useState(null);
   const [incomeStatement, setIncomeStatement] = useState(null);
 
@@ -59,11 +63,13 @@ export default ({ match }) => {
       const [
         companyProfile,
         keyMetrics,
+        financialRatios,
         incomeStatement,
         tenYearFederalNoteYield
       ] = await Promise.all([
         fetchCompanyProfile(match.params.tickerSymbol),
         fetchKeyMetrics(match.params.tickerSymbol),
+        fetchFinancialRatios(match.params.tickerSymbol),
         fetchIncomeStatement(match.params.tickerSymbol),
         fetch10YearFederalNoteYield()
       ]);
@@ -84,7 +90,7 @@ export default ({ match }) => {
       );
 
       setProfile(companyProfile.profile);
-      // setFinancialRatios(financialRatios.ratios);
+      setFinancialRatios(financialRatios.ratios);
       setIntrinsicPrice(intrinsicValue);
       setKeyMetrics(keyMetrics.metrics);
       setIncomeStatement(incomeStatement.financials);
@@ -103,7 +109,7 @@ export default ({ match }) => {
   }
 
   return (
-    <div className={css(styles.root)}>
+    <Container className={css(styles.root)}>
       <h1>
         <b>Intrinsic</b> Stock
       </h1>
@@ -114,8 +120,8 @@ export default ({ match }) => {
       />
 
       {profile && (
-        <div>
-          <div>
+        <Fragment>
+          <Row>
             <h2>
               <a
                 href={profile.website}
@@ -125,63 +131,116 @@ export default ({ match }) => {
                 {profile.companyName}
               </a>
             </h2>
-          </div>
+          </Row>
 
-          <div>
+          <Row>
             <h3>${profile.price.toFixed(1)}</h3>
             <p>current price</p>
-          </div>
-        </div>
+          </Row>
+        </Fragment>
       )}
 
       {intrinsicPrice && (
-        <div>
+        <Row>
           <h3>${intrinsicPrice.toFixed(1)}</h3>
           <p>intrinsic price</p>
-        </div>
+        </Row>
       )}
 
       {/* TODO double check that these graphs represent what they mention in the investment videos */}
-      {/* {financialRatios && (
-        <div>
-          <LineGraph
+      {financialRatios && (
+        <Fragment>
+          <Row>
+            <h2>Price to Earnings Ratio</h2>
+          </Row>
+
+          <Row>
+            {financialRatios[0].investmentValuationRatios.priceEarningsRatio <=
+            5 ? (
+              <p className="text-success">
+                The current P/E ratio is{' '}
+                <b>
+                  {
+                    financialRatios[0].investmentValuationRatios
+                      .priceEarningsRatio
+                  }{' '}
+                </b>
+                which is greater than the Warrent Buffet recommended value of 5.
+              </p>
+            ) : (
+              <p className="text-danger">
+                The current P/E ratio is{' '}
+                <b>
+                  {
+                    financialRatios[0].investmentValuationRatios
+                      .priceEarningsRatio
+                  }{' '}
+                </b>
+                which is greater than the Warrent Buffet recommended value of 5.
+              </p>
+            )}
+
+            <p>
+              According to Warent Buffet, the price to earnings ratio should be
+              less than 5.
+            </p>
+          </Row>
+          <Row>
+            <p>
+              currnent P/E Ratio:
+              {financialRatios[0].investmentValuationRatios.priceEarningsRatio}
+            </p>
+          </Row>
+          {/* <LineGraph
             label="Price to Earnings Ratio"
             datums={financialRatios.map(ratio => ({
               x: new Date(ratio.date).getTime(),
               y: ratio.investmentValuationRatios.priceEarningsRatio
             }))}
-          />
-          <LineGraph
+          /> */}
+          {/* <LineGraph
             label="Debt to Equity Ratio"
             datums={financialRatios.map(ratio => ({
               x: new Date(ratio.date).getTime(),
               y: ratio.debtRatios.debtEquityRatio
             }))}
-          />
+          /> */}
 
-          <LineGraph
+          {/* <LineGraph
             label="Dividend Yield"
             datums={financialRatios.map(ratio => ({
               x: new Date(ratio.date).getTime(),
               y: ratio.investmentValuationRatios.dividendYield || 0
             }))}
-          />
-        </div>
-      )} */}
-
-      {keyMetrics && (
-        <div>
-          <LineGraph
-            label="Book Value"
-            datums={keyMetrics.map(metric => ({
-              x: new Date(metric.date).getTime(),
-              y: metric['Book Value per Share'] || 0
-            }))}
-          />
-        </div>
+          /> */}
+        </Fragment>
       )}
 
-      {incomeStatement && (
+      {/* {keyMetrics && (
+        <Fragment>
+          <Row>
+            <h2>Book Value</h2>
+          </Row>
+
+          <Row>
+            <Col>
+              <p>should always go up</p>
+            </Col>
+
+            <Col>
+              <LineGraph
+                label="Book Value"
+                datums={keyMetrics.map(metric => ({
+                  x: new Date(metric.date).getTime(),
+                  y: metric['Book Value per Share'] || 0
+                }))}
+              />
+            </Col>
+          </Row>
+        </Fragment>
+      )} */}
+
+      {/* {incomeStatement && (
         <div>
           <LineGraph
             label="Earnings Per Share"
@@ -198,7 +257,7 @@ export default ({ match }) => {
             }))}
           />
         </div>
-      )}
-    </div>
+      )} */}
+    </Container>
   );
 };
