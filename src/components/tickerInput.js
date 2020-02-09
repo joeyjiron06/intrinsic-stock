@@ -56,12 +56,13 @@ export default ({ onSelect, intialText }) => {
 
   useEffect(() => {
     setHighlitedIndex(0);
-  }, [tickerSearch]);
+    dispatch(tickerSearchSlice.actions.success(null))
+  }, [dispatch]);
 
   function onChange(event) {
     const text = event.target.value;
     setInputText(text);
-    dispatch(tickerSearchSlice.fetch(text));
+    dispatch(tickerSearchSlice.actions.fetch(text));
   }
 
   function onKeyDown(event) {
@@ -81,7 +82,6 @@ export default ({ onSelect, intialText }) => {
       case KEYS.ENTER:
         event.preventDefault();
         if (tickerSearch.data && tickerSearch.data[highlitedIndex]) {
-          dispatch(tickerSearchSlice.clear());
           onSelect(tickerSearch.data[highlitedIndex].symbol);
         }
         break;
@@ -92,7 +92,6 @@ export default ({ onSelect, intialText }) => {
 
   function rowClicked(tickerSymbol) {
     return () => {
-      dispatch(tickerSearchSlice.clear());
       onSelect(tickerSymbol);
     };
   }
@@ -109,7 +108,7 @@ export default ({ onSelect, intialText }) => {
       />
 
       {(tickerSearch.loading || tickerSearch.data || tickerSearch.error) && (
-        <Dropdown open={true} toggle={() => {}}>
+        <Dropdown open={true} toggle={() => { }}>
           <DropdownMenu className={css(styles.dropdown)}>
             {tickerSearch.loading && <DropdownItem>Loading...</DropdownItem>}
             {tickerSearch.error && (

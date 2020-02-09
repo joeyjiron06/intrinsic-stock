@@ -4,7 +4,7 @@ import Home from './home';
 import StockDetails from './stockDetails';
 
 export default () => (
-  <Router>
+  <Router basename={process.env.PUBLIC_URL}>
     <Switch>
       <Route exact path="/" component={Home} />
       <Route exact path="/stock/:tickerSymbol" component={StockDetails} />

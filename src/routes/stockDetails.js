@@ -1,15 +1,14 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import TickerInput from '../components/tickerInput';
-import LineGraph from '../components/lineGraph';
-import { Container, Col, Row } from 'shards-react';
-import {
-  fetchCompanyProfile,
-  fetchKeyMetrics,
-  fetchIncomeStatement,
-  fetchFinancialRatios
-} from '../services/financialModellingPrep';
-import { fetch10YearFederalNoteYield } from '../services/usTreasury';
+import { Container, Col, Row, Card, CardBody } from 'shards-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ReactComponent as Checkmark } from '../assets/check-circle.svg';
+import { ReactComponent as XMark } from '../assets/x-circle.svg';
+import { ReactComponent as TrendingDown } from '../assets/trending-down.svg';
+import { ReactComponent as TrendingUp } from '../assets/trending-up.svg';
+
+import stockDetailsSlice from '../store/stockDetailsSlice';
 
 const styles = StyleSheet.create({
   root: {
@@ -23,89 +22,36 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     maxWidth: 400,
     marginBottom: 30
+  },
+  summaryIcon: {
+    marginRight: 10
   }
 });
 
-function calculateIntrinsicValue(
-  bookValues,
-  dividends,
-  tenYearFederalNoteYield
-) {
-  const bookValue = bookValues[0];
-  const oldestBookValue = bookValues[bookValues.length - 1];
-  const dividend = dividends[0];
-  const years = bookValues.length;
-
-  // this code below is taken directly from the buffet books website
-  const avgBookValueChangePercentage =
-    100 * (Math.pow(bookValue / oldestBookValue, 1 / years) - 1);
-  const perc = 1 + avgBookValueChangePercentage / 100;
-  const parr = bookValue * Math.pow(perc, years);
-  const federalNoteRate = tenYearFederalNoteYield / 100;
-  const extra = Math.pow(1 + federalNoteRate, years);
-  const extraInverse = 1 / extra;
-  const intrinsicValue =
-    (dividend * (1 - extraInverse)) / federalNoteRate + parr / extra;
-
-  return intrinsicValue;
+function TrendingIcon({ isTrendingUpwards }) {
+  return isTrendingUpwards ? <TrendingUp stroke='green' className={css(styles.summaryIcon)} /> : <TrendingDown
+    className={css(styles.summaryIcon)}
+    stroke='red' />
 }
+
+function SuccessIcon({ success }) {
+  return success ? <Checkmark stroke='green' className={css(styles.summaryIcon)} /> : <XMark stroke='red' className={css(styles.summaryIcon)} />
+}
+
 
 export default ({ match }) => {
   const [tickerSymbol] = useState(match.params.tickerSymbol);
-  const [profile, setProfile] = useState(null);
-  const [intrinsicPrice, setIntrinsicPrice] = useState(null);
-  const [financialRatios, setFinancialRatios] = useState(null);
-  const [keyMetrics, setKeyMetrics] = useState(null);
-  const [incomeStatement, setIncomeStatement] = useState(null);
+  const stockDetails = useSelector(state => state.stockDetails);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    async function init() {
-      const [
-        companyProfile,
-        keyMetrics,
-        financialRatios,
-        incomeStatement,
-        tenYearFederalNoteYield
-      ] = await Promise.all([
-        fetchCompanyProfile(match.params.tickerSymbol),
-        fetchKeyMetrics(match.params.tickerSymbol),
-        fetchFinancialRatios(match.params.tickerSymbol),
-        fetchIncomeStatement(match.params.tickerSymbol),
-        fetch10YearFederalNoteYield()
-      ]);
-
-      // TODO deal with nulls
-
-      const bookValues = keyMetrics.metrics.map(
-        metric => Number(metric['Book Value per Share']) || 0
-      );
-      const dividends = incomeStatement.financials.map(
-        statement => Number(statement['Dividend per Share']) || 0
-      );
-
-      const intrinsicValue = calculateIntrinsicValue(
-        bookValues,
-        dividends,
-        tenYearFederalNoteYield
-      );
-
-      setProfile(companyProfile.profile);
-      setFinancialRatios(financialRatios.ratios);
-      setIntrinsicPrice(intrinsicValue);
-      setKeyMetrics(keyMetrics.metrics);
-      setIncomeStatement(incomeStatement.financials);
-    }
-
-    init();
-
-    return () => {};
-  }, []);
+    dispatch(stockDetailsSlice.actions.loading());
+    dispatch(stockDetailsSlice.actions.fetch(match.params.tickerSymbol));
+  }, [dispatch, match.params.tickerSymbol]);
 
   function onSelect(symbol) {
     // refresh the page so we don't have to deal with clearning state
-    window.location.href = `${
-      window.location.origin
-    }/stock/${encodeURIComponent(symbol)}`;
+    window.location.href = `${process.env.PUBLIC_URL || ''}/stock/${encodeURIComponent(symbol)}`;
   }
 
   return (
@@ -119,145 +65,185 @@ export default ({ match }) => {
         intialText={tickerSymbol}
       />
 
-      {profile && (
-        <Fragment>
-          <Row>
-            <h2>
-              <a
-                href={profile.website}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {profile.companyName}
-              </a>
-            </h2>
-          </Row>
-
-          <Row>
-            <h3>${profile.price.toFixed(1)}</h3>
-            <p>current price</p>
-          </Row>
-        </Fragment>
-      )}
-
-      {intrinsicPrice && (
+      {stockDetails.loading && (
         <Row>
-          <h3>${intrinsicPrice.toFixed(1)}</h3>
-          <p>intrinsic price</p>
+          <h3>Loading...</h3>
         </Row>
       )}
 
-      {/* TODO double check that these graphs represent what they mention in the investment videos */}
-      {financialRatios && (
+      {stockDetails.error && (
         <Fragment>
           <Row>
-            <h2>Price to Earnings Ratio</h2>
-          </Row>
-
-          <Row>
-            {financialRatios[0].investmentValuationRatios.priceEarningsRatio <=
-            5 ? (
-              <p className="text-success">
-                The current P/E ratio is{' '}
-                <b>
-                  {
-                    financialRatios[0].investmentValuationRatios
-                      .priceEarningsRatio
-                  }{' '}
-                </b>
-                which is greater than the Warrent Buffet recommended value of 5.
-              </p>
-            ) : (
-              <p className="text-danger">
-                The current P/E ratio is{' '}
-                <b>
-                  {
-                    financialRatios[0].investmentValuationRatios
-                      .priceEarningsRatio
-                  }{' '}
-                </b>
-                which is greater than the Warrent Buffet recommended value of 5.
-              </p>
-            )}
-
-            <p>
-              According to Warent Buffet, the price to earnings ratio should be
-              less than 5.
-            </p>
+            <h3>Errror</h3>
           </Row>
           <Row>
-            <p>
-              currnent P/E Ratio:
-              {financialRatios[0].investmentValuationRatios.priceEarningsRatio}
-            </p>
+            <div>{stockDetails.error}</div>
           </Row>
-          {/* <LineGraph
-            label="Price to Earnings Ratio"
-            datums={financialRatios.map(ratio => ({
-              x: new Date(ratio.date).getTime(),
-              y: ratio.investmentValuationRatios.priceEarningsRatio
-            }))}
-          /> */}
-          {/* <LineGraph
-            label="Debt to Equity Ratio"
-            datums={financialRatios.map(ratio => ({
-              x: new Date(ratio.date).getTime(),
-              y: ratio.debtRatios.debtEquityRatio
-            }))}
-          /> */}
-
-          {/* <LineGraph
-            label="Dividend Yield"
-            datums={financialRatios.map(ratio => ({
-              x: new Date(ratio.date).getTime(),
-              y: ratio.investmentValuationRatios.dividendYield || 0
-            }))}
-          /> */}
         </Fragment>
       )}
 
-      {/* {keyMetrics && (
-        <Fragment>
-          <Row>
-            <h2>Book Value</h2>
+
+      {stockDetails.data && (
+        <Container>
+          <Row className='mb-5'>
+            <Col sm='12' md='6' lg='6' className='mb-4'>
+              <Row>
+                <Col className='text-center'>
+                  <h5>Price</h5>
+                </Col>
+              </Row>
+              <Row>
+                <Col className='text-center'>
+                  <h2>
+                    ${stockDetails.data.intrinsicPrice}
+                  </h2>
+
+                  <div >
+                    intrinsic price
+                  </div>
+                </Col>
+                <Col className='text-center'>
+                  <h2>
+                    ${stockDetails.data.currentPrice}
+                  </h2>
+                  <div>
+                    current price
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col className='text-center'>
+                  <h5>Ratios</h5>
+                </Col>
+              </Row>
+              <Row>
+                <Col className='text-center'>
+                  <h2>{stockDetails.data.priceToEarningsRatio}</h2>
+                  <div>P/E Ratio</div>
+                </Col>
+                <Col className='text-center'>
+                  <h2>{stockDetails.data.priceToBookValueRatio}</h2>
+                  <div>P/BV Ratio</div>
+                </Col>
+              </Row>
+            </Col>
+
+            <Col>
+              <Row>
+                <Col className='text-center'>
+                  <h5>Summary</h5>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.isIntrinsicPriceLessThanCurrentPrice} />
+                  <span>{'instrinsic price < current price'}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.isPriceToEarningsRatioFair} />
+                  <span>{'P/E Ratio < 15'}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.isPriceToBookValueRatioFair} />
+                  <span>{'P/BV Ratio < 1.5'}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <TrendingIcon isTrendingUpwards={stockDetails.data.isDividendTrendingUpwards} />
+                  <span>{'Dividend per Share'}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <TrendingIcon isTrendingUpwards={stockDetails.data.isBookValueTrendingUpwards} />
+                  <span>{'Book Value'}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <TrendingIcon isTrendingUpwards={stockDetails.data.isEarningsTrendingUpwards} />
+                  <span>{'Earnings per Share'}</span>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <TrendingIcon isTrendingUpwards={stockDetails.data.isDebtTrendingDownwards} />
+                  <span>{'Debt/Equity Ratio'}</span>
+                </Col>
+              </Row>
+            </Col>
           </Row>
 
           <Row>
             <Col>
-              <p>should always go up</p>
-            </Col>
+              <Card small className="mb-4">
+                <CardBody className="p-0 pb-3">
+                  <table className="table mb-0">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="border-0">Year</th>
+                        <th scope="col" className="border-0">Earnings per Share</th>
+                        <th scope="col" className="border-0">Book Value</th>
+                        <th scope="col" className="border-0">Dividend per Share</th>
+                        <th scope="col" className="border-0">Debt/Equity Ratio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stockDetails.data.listByYears.map(row => (
+                        <tr key={row.date}>
+                          <td>{new Date(row.date).getFullYear()}</td>
+                          <td>{row.earningsPerShare.toFixed(1)}</td>
+                          <td>{row.bookValue.toFixed(1)}</td>
+                          <td>{row.dividend.toFixed(1)}</td>
+                          <td>{row.debtToEquityRatio.toFixed(1)}</td>
+                        </tr>
+                      ))}
 
-            <Col>
-              <LineGraph
-                label="Book Value"
-                datums={keyMetrics.map(metric => ({
-                  x: new Date(metric.date).getTime(),
-                  y: metric['Book Value per Share'] || 0
-                }))}
-              />
+                      {/* <tr>
+                        <td>1</td>
+                        <td>Ali</td>
+                        <td>Kerry</td>
+                        <td>Russian Federation</td>
+                        <td>Gdańsk</td>
+                        <td>107-0339</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>Clark</td>
+                        <td>Angela</td>
+                        <td>Estonia</td>
+                        <td>Borghetto di Vara</td>
+                        <td>1-660-850-1647</td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>Jerry</td>
+                        <td>Nathan</td>
+                        <td>Cyprus</td>
+                        <td>Braunau am Inn</td>
+                        <td>214-4225</td>
+                      </tr>
+                      <tr>
+                        <td>4</td>
+                        <td>Colt</td>
+                        <td>Angela</td>
+                        <td>Liberia</td>
+                        <td>Bad Hersfeld</td>
+                        <td>1-848-473-7416</td>
+                      </tr> */}
+                    </tbody>
+                  </table>
+                </CardBody>
+              </Card>
             </Col>
           </Row>
-        </Fragment>
-      )} */}
-
-      {/* {incomeStatement && (
-        <div>
-          <LineGraph
-            label="Earnings Per Share"
-            datums={incomeStatement.map(statement => ({
-              x: new Date(statement.date).getTime(),
-              y: statement['EPS'] || 0
-            }))}
-          />
-          <LineGraph
-            label="Dividend per Share"
-            datums={incomeStatement.map(statement => ({
-              x: new Date(statement.date).getTime(),
-              y: statement['Dividend per Share'] || 0
-            }))}
-          />
-        </div>
-      )} */}
+        </Container>
+      )}
     </Container>
   );
 };

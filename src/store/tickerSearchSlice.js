@@ -1,4 +1,3 @@
-// import { createSlice } from '@reduxjs/toolkit';
 import { searchTicker } from '../services/financialModellingPrep';
 import createAsyncSlice from './createAsyncSlice';
 
