@@ -47,7 +47,7 @@ const KEYS = {
   ENTER: 13
 };
 
-export default ({ onSelect, intialText }) => {
+export default ({ styles: inStyles, onSelect, intialText }) => {
   const [inputText, setInputText] = useState(intialText);
   const [highlitedIndex, setHighlitedIndex] = useState(-1);
   const dispatch = useDispatch();
@@ -96,7 +96,7 @@ export default ({ onSelect, intialText }) => {
   }
 
   return (
-    <div className={css(styles.root)}>
+    <div className={css(styles.root, inStyles)}>
       <FormInput
         size="lg"
         placeholder="Find Stock"

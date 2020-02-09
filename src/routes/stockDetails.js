@@ -16,19 +16,22 @@ const styles = StyleSheet.create({
     padding: 40
   },
   input: {
-    textTransform: 'uppercase',
-    maxWidth: 400,
-    marginBottom: 30
+    display: 'block',
+    margin: 'auto'
   },
+  tickerInput: {
+    margin: 'auto'
+  },
+
   summaryIcon: {
     marginRight: 10
   }
 });
 
-function TrendingIcon({ isTrendingUpwards }) {
-  return isTrendingUpwards ? <TrendingUp stroke='green' className={css(styles.summaryIcon)} /> : <TrendingDown
+function TrendingIcon({ isTrendingUpwards, colors = ['green', 'red'] }) {
+  return isTrendingUpwards ? <TrendingUp stroke={colors[0]} className={css(styles.summaryIcon)} /> : <TrendingDown
     className={css(styles.summaryIcon)}
-    stroke='red' />
+    stroke={colors[1]} />
 }
 
 function SuccessIcon({ success }) {
@@ -38,15 +41,14 @@ function SuccessIcon({ success }) {
 
 export default ({ match }) => {
   const [tickerSymbol] = useState(match.params.tickerSymbol);
-  const [intrinsicPriceToolTipVisibile, setIntrinsicPriceToolTipVisibile] = useState(false);
+  const stockDetails = useSelector(state => state.stockDetails);
+  const dispatch = useDispatch();
   const [toolTips, setToolTips] = useState({
     instrinsicPrice: false,
     priceToEarningsRatio: false,
     bookValueRatio: false,
+    debtToEquityRatio: false,
   });
-
-  const stockDetails = useSelector(state => state.stockDetails);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(stockDetailsSlice.actions.loading());
@@ -70,25 +72,32 @@ export default ({ match }) => {
   return (
     <Container className={css(styles.root)}>
       <Row>
-        <h1>
-          <b>Intrinsic</b> Stock
-      </h1>
+        <Col className='text-center'>
+          <h1>
+            <b>Intrinsic</b> Stock
+          </h1>
+        </Col>
       </Row>
 
       <Row>
-        <TickerInput
-          className={css(styles.input)}
-          onSelect={onSelect}
-          intialText={tickerSymbol}
-        />
+        <Col className={css(styles.tickerInput)}>
+          <TickerInput
+            styles={styles.input}
+            onSelect={onSelect}
+            intialText={tickerSymbol}
+          />
+          {stockDetails.data &&
+            <Row>
+              <Col className='text-center'>
+                <a href={stockDetails.data.companyWebsite} target='_blank' rel='noopener noreferrer' ><p>{stockDetails.data.companyName}</p></a>
+              </Col>
+            </Row>
+          }
+        </Col>
       </Row>
 
 
-      {stockDetails.data &&
-        <Row>
-          <a href={stockDetails.data.companyWebsite} target='_blank' rel='noopener noreferrer' ><p>{stockDetails.data.companyName}</p></a>
-        </Row>
-      }
+
 
       {stockDetails.loading && (
         <Row>
@@ -145,14 +154,14 @@ export default ({ match }) => {
                   </div>
                 </Col>
               </Row>
-              <Row>
+              <Row className='mt-3'>
                 <Col className='text-center'>
                   <h5>Ratios</h5>
                 </Col>
               </Row>
               <Row>
                 <Col className='text-center'>
-                  <h2>{stockDetails.data.priceToEarningsRatio}</h2>
+                  <h2>{stockDetails.data.priceToEarningsRatio.toFixed(1)}</h2>
                   <div id='priceToEarningsRatio'>P/E Ratio <Info width={14} height={14} /></div>
                   <Tooltip
                     target="#priceToEarningsRatio"
@@ -164,7 +173,7 @@ export default ({ match }) => {
                   </Tooltip>
                 </Col>
                 <Col className='text-center'>
-                  <h2>{stockDetails.data.priceToBookValueRatio}</h2>
+                  <h2>{stockDetails.data.priceToBookValueRatio.toFixed(1)}</h2>
                   <div>P/BV Ratio</div>
                 </Col>
               </Row>
@@ -214,8 +223,20 @@ export default ({ match }) => {
               </Row>
               <Row>
                 <Col>
-                  <TrendingIcon isTrendingUpwards={stockDetails.data.isDebtTrendingDownwards} />
-                  <span>{'Debt/Equity Ratio'}</span>
+                  <TrendingIcon isTrendingUpwards={!stockDetails.data.isDebtTrendingDownwards}
+                    colors={['red', 'green']}
+                  />
+                  <span id='debtToEquityRatio'>{'Debt/Equity Ratio'}</span>
+
+                  {!stockDetails.data.isDebtTrendingDownwards && <Tooltip
+                    target="#debtToEquityRatio"
+                    placement="bottom"
+                    open={toolTips.debtToEquityRatio}
+                    toggle={toggleToolTip('debtToEquityRatio')}
+                  >
+                    {'Debt is increasing which may be a sign that this company is not managed well. See Debt/Equity ratio table below for more info.'}
+                  </Tooltip>}
+
                 </Col>
               </Row>
             </Col>

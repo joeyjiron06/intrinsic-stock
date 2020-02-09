@@ -32,6 +32,10 @@ function calculateIntrinsicValue(
   return intrinsicValue;
 }
 
+function isTrendingUpwards(array) {
+  return array.length > 0 && array[0] > array[array.length - 1];
+}
+
 
 export default createAsyncSlice('stockDetails', async tickerSymbol => {
   // await new Promise(resolve => setTimeout(resolve, 3000));
@@ -52,7 +56,7 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
 
   const intrinsicPrice = 23.4;
   const currentPrice = companyProfile.price;
-  const priceToEarningsRatio = financialRatios[0].investmentValuationRatios.priceEarningsRatio;
+  const priceToEarningsRatio = Number(financialRatios[0].investmentValuationRatios.priceEarningsRatio) || 0;
   const priceToBookValueRatio = financialRatios.map(ratio => Number(ratio.investmentValuationRatios.priceToBookRatio) || undefined).find(num => num !== undefined);
 
   const listByYears = Array(11).fill().map((_, index) => ({
@@ -68,10 +72,10 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
   const isIntrinsicPriceLessThanCurrentPrice = true;
   const isPriceToEarningsRatioFair = true;
   const isPriceToBookValueRatioFair = true;
-  const isDividendTrendingUpwards = true;
-  const isBookValueTrendingUpwards = true;
-  const isEarningsTrendingUpwards = true;
-  const isDebtTrendingDownwards = true;
+  const isDividendTrendingUpwards = isTrendingUpwards(listByYears.map(data => data.dividend));
+  const isBookValueTrendingUpwards = isTrendingUpwards(listByYears.map(data => data.bookValue));
+  const isEarningsTrendingUpwards = isTrendingUpwards(listByYears.map(data => data.earningsPerShare));
+  const isDebtTrendingDownwards = !isTrendingUpwards(listByYears.map(data => data.debtToEquityRatio));
 
   return {
     companyName,
