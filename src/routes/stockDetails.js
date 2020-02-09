@@ -129,7 +129,7 @@ export default ({ match }) => {
               <Row>
                 <Col className='text-center'>
                   <h2>
-                    ${stockDetails.data.intrinsicPrice}
+                    ${stockDetails.data.intrinsicPrice.toFixed(2)}
                   </h2>
 
                   <div id='instrinsicPrice' >
@@ -147,7 +147,7 @@ export default ({ match }) => {
                 </Col>
                 <Col className='text-center'>
                   <h2>
-                    ${stockDetails.data.currentPrice}
+                    ${stockDetails.data.currentPrice.toFixed(2)}
                   </h2>
                   <div>
                     current price
@@ -188,7 +188,7 @@ export default ({ match }) => {
               <Row>
                 <Col>
                   <SuccessIcon success={stockDetails.data.isIntrinsicPriceLessThanCurrentPrice} />
-                  <span>{'instrinsic price < current price'}</span>
+                  <span>{'current price < instrinsic price'}</span>
                 </Col>
               </Row>
               <Row>

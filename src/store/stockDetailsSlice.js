@@ -54,11 +54,6 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
     fetch10YearFederalNoteYield()
   ]);
 
-  const intrinsicPrice = 23.4;
-  const currentPrice = companyProfile.price;
-  const priceToEarningsRatio = Number(financialRatios[0].investmentValuationRatios.priceEarningsRatio) || 0;
-  const priceToBookValueRatio = financialRatios.map(ratio => Number(ratio.investmentValuationRatios.priceToBookRatio) || undefined).find(num => num !== undefined);
-
   const listByYears = Array(11).fill().map((_, index) => ({
     date: incomeStatement[index].date,
     earningsPerShare: Number(incomeStatement[index]['EPS']) || 0,
@@ -67,15 +62,30 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
     debtToEquityRatio: Number(financialRatios[index].debtRatios.debtEquityRatio) || 0,
   }));
 
+  const bookValues = listByYears.map(data => data.bookValue);
+  const dividends = listByYears.map(data => data.dividend);
+  const earningsPerShare = listByYears.map(data => data.earningsPerShare);
+  const debtToEquityRatios = listByYears.map(data => data.debtToEquityRatio);
+
+  const intrinsicPrice = calculateIntrinsicValue(
+    bookValues,
+    dividends,
+    tenYearFederalNoteYield
+  );
+
+  const currentPrice = companyProfile.price;
+  const priceToEarningsRatio = Number(financialRatios[0].investmentValuationRatios.priceEarningsRatio) || 0;
+  const priceToBookValueRatio = financialRatios.map(ratio => Number(ratio.investmentValuationRatios.priceToBookRatio) || undefined).find(num => num !== undefined);
+
   const companyName = companyProfile.companyName;
   const companyWebsite = companyProfile.website;
-  const isIntrinsicPriceLessThanCurrentPrice = true;
-  const isPriceToEarningsRatioFair = true;
-  const isPriceToBookValueRatioFair = true;
-  const isDividendTrendingUpwards = isTrendingUpwards(listByYears.map(data => data.dividend));
-  const isBookValueTrendingUpwards = isTrendingUpwards(listByYears.map(data => data.bookValue));
-  const isEarningsTrendingUpwards = isTrendingUpwards(listByYears.map(data => data.earningsPerShare));
-  const isDebtTrendingDownwards = !isTrendingUpwards(listByYears.map(data => data.debtToEquityRatio));
+  const isIntrinsicPriceLessThanCurrentPrice = currentPrice < intrinsicPrice;
+  const isPriceToEarningsRatioFair = priceToEarningsRatio < 15;
+  const isPriceToBookValueRatioFair = priceToBookValueRatio < 1.5;
+  const isDividendTrendingUpwards = isTrendingUpwards(dividends);
+  const isBookValueTrendingUpwards = isTrendingUpwards(bookValues);
+  const isEarningsTrendingUpwards = isTrendingUpwards(earningsPerShare);
+  const isDebtTrendingDownwards = !isTrendingUpwards(debtToEquityRatios);
 
   return {
     companyName,
