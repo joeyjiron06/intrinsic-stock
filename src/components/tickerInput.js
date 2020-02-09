@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   root: {
     display: 'inline-block',
     width: 400,
-    marginBottom: 80,
     marginRight: 50
   },
   input: {

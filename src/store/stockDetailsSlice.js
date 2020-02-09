@@ -53,7 +53,7 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
   const intrinsicPrice = 23.4;
   const currentPrice = companyProfile.price;
   const priceToEarningsRatio = financialRatios[0].investmentValuationRatios.priceEarningsRatio;
-  const priceToBookValueRatio = financialRatios[0].investmentValuationRatios.priceToBookRatio;
+  const priceToBookValueRatio = financialRatios.map(ratio => Number(ratio.investmentValuationRatios.priceToBookRatio) || undefined).find(num => num !== undefined);
 
   const listByYears = Array(11).fill().map((_, index) => ({
     date: incomeStatement[index].date,
@@ -63,6 +63,8 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
     debtToEquityRatio: Number(financialRatios[index].debtRatios.debtEquityRatio) || 0,
   }));
 
+  const companyName = companyProfile.companyName;
+  const companyWebsite = companyProfile.website;
   const isIntrinsicPriceLessThanCurrentPrice = true;
   const isPriceToEarningsRatioFair = true;
   const isPriceToBookValueRatioFair = true;
@@ -72,6 +74,8 @@ export default createAsyncSlice('stockDetails', async tickerSymbol => {
   const isDebtTrendingDownwards = true;
 
   return {
+    companyName,
+    companyWebsite,
     intrinsicPrice,
     currentPrice,
     priceToEarningsRatio,
