@@ -9,11 +9,10 @@ const styles = StyleSheet.create({
   root: {
     display: 'inline-block',
     maxWidth: 400,
-    width: '100%',
-    marginRight: 50
+    width: '100%'
   },
   input: {
-    maxWidth: 400
+    width: '100%'
   },
   dropdown: {
     width: '100%'

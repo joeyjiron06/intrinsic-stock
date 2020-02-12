@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import TickerInput from '../components/tickerInput';
+import { Row, Col, Container } from 'shards-react';
 
 const styles = StyleSheet.create({
   root: {
@@ -9,8 +10,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center'
   },
-  input: {
-    maxWidth: 400
+  inputRow: {
+    width: '100%'
   }
 });
 
@@ -20,17 +21,30 @@ export default ({ history }) => {
   }
 
   return (
-    <div className={css(styles.root)}>
-      <h1>
-        <b>Intrinsic</b> Stock
-      </h1>
-      <p>find the intrinsic value of a stock</p>
-      <TickerInput
-        size="lg"
-        placeholder="Find Stock"
-        className={css(styles.input)}
-        onSelect={onSelect}
-      />
-    </div>
+    <Container className={css(styles.root)}>
+      <Row>
+        <Col>
+          <h1>
+            <b>Intrinsic</b> Stock
+          </h1>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <p>find the intrinsic value of a stock</p>
+        </Col>
+      </Row>
+
+      <Row className={css(styles.inputRow)}>
+        <Col>
+          <TickerInput
+            size="lg"
+            placeholder="Find Stock"
+            onSelect={onSelect}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 };
