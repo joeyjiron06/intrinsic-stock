@@ -8,7 +8,8 @@ import { searchTicker } from '../services/financialModellingPrep';
 const styles = StyleSheet.create({
   root: {
     display: 'inline-block',
-    width: 400,
+    maxWidth: 400,
+    width: '100%',
     marginRight: 50
   },
   input: {
