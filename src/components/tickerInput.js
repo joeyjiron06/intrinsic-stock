@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import { FormInput } from 'shards-react';
-import { useDispatch, useSelector } from 'react-redux';
-import tickerSearchSlice from '../store/tickerSearchSlice';
 import { Dropdown, DropdownMenu, DropdownItem } from 'shards-react';
+import { useQuery } from 'react-query';
+import { searchTicker } from '../services/financialModellingPrep';
+
 const styles = StyleSheet.create({
   root: {
     display: 'inline-block',
@@ -49,19 +50,27 @@ const KEYS = {
 
 export default ({ styles: inStyles, onSelect, intialText }) => {
   const [inputText, setInputText] = useState(intialText);
+  const [hasFetchedInitialText, setHasFetchedInitialText] = useState(false);
   const [highlitedIndex, setHighlitedIndex] = useState(-1);
-  const dispatch = useDispatch();
-  const tickerSearch = useSelector(state => state.tickerSearch);
+  const tickerSearch = useQuery(['tickerSearch', { inputText }], () => {
+    if (intialText !== undefined && !hasFetchedInitialText) {
+      setHasFetchedInitialText(true);
+      return Promise.resolve();
+    }
+
+    return searchTicker(inputText);
+  });
 
   useEffect(() => {
     setHighlitedIndex(0);
-    dispatch(tickerSearchSlice.actions.success(null))
-  }, [dispatch]);
+  }, []);
 
   function onChange(event) {
-    const text = event.target.value;
-    setInputText(text);
-    dispatch(tickerSearchSlice.actions.fetch(text));
+    if (event.target.value === inputText) {
+      return;
+    }
+
+    setInputText(event.target.value);
   }
 
   function onKeyDown(event) {
@@ -106,10 +115,10 @@ export default ({ styles: inStyles, onSelect, intialText }) => {
         value={inputText || ''}
       />
 
-      {(tickerSearch.loading || tickerSearch.data || tickerSearch.error) && (
+      {(tickerSearch.isLoading || tickerSearch.data || tickerSearch.error) && inputText && (
         <Dropdown open={true} toggle={() => { }}>
           <DropdownMenu className={css(styles.dropdown)}>
-            {tickerSearch.loading && <DropdownItem>Loading...</DropdownItem>}
+            {tickerSearch.isLoading && <DropdownItem>Loading...</DropdownItem>}
             {tickerSearch.error && (
               <DropdownItem>Error: {tickerSearch.error.message} </DropdownItem>
             )}

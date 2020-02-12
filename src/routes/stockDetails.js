@@ -1,15 +1,14 @@
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import TickerInput from '../components/tickerInput';
 import { Container, Col, Row, Card, CardBody, Tooltip } from 'shards-react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useQuery } from 'react-query';
 import { ReactComponent as Checkmark } from '../assets/check-circle.svg';
 import { ReactComponent as XMark } from '../assets/x-circle.svg';
 import { ReactComponent as TrendingDown } from '../assets/trending-down.svg';
 import { ReactComponent as TrendingUp } from '../assets/trending-up.svg';
 import { ReactComponent as Info } from '../assets/info.svg';
-
-import stockDetailsSlice from '../store/stockDetailsSlice';
+import { fetchStockDetails } from '../services/financialModellingPrep';
 
 const styles = StyleSheet.create({
   root: {
@@ -22,7 +21,9 @@ const styles = StyleSheet.create({
   tickerInput: {
     margin: 'auto'
   },
-
+  table: {
+    overflowX: 'auto'
+  },
   summaryIcon: {
     marginRight: 10
   }
@@ -41,19 +42,14 @@ function SuccessIcon({ success }) {
 
 export default ({ match }) => {
   const [tickerSymbol] = useState(match.params.tickerSymbol);
-  const stockDetails = useSelector(state => state.stockDetails);
-  const dispatch = useDispatch();
+  const stockDetails = useQuery(['stockDetails', { tickerSymbol }], () => fetchStockDetails(tickerSymbol));
+
   const [toolTips, setToolTips] = useState({
     instrinsicPrice: false,
     priceToEarningsRatio: false,
     bookValueRatio: false,
     debtToEquityRatio: false,
   });
-
-  useEffect(() => {
-    dispatch(stockDetailsSlice.actions.loading());
-    dispatch(stockDetailsSlice.actions.fetch(match.params.tickerSymbol));
-  }, [dispatch, match.params.tickerSymbol]);
 
   function onSelect(symbol) {
     // refresh the page so we don't have to deal with clearning state
@@ -96,28 +92,25 @@ export default ({ match }) => {
         </Col>
       </Row>
 
-
-
-
-      {stockDetails.loading && (
+      {stockDetails.isLoading && (
         <Row>
           <h3>Loading...</h3>
         </Row>
       )}
 
-      {stockDetails.error && (
+      {!stockDetails.isLoading && stockDetails.error && (
         <Fragment>
           <Row>
             <h3>Errror</h3>
           </Row>
           <Row>
-            <div>{stockDetails.error}</div>
+            <div>{stockDetails.error.toString()}</div>
           </Row>
         </Fragment>
       )}
 
 
-      {stockDetails.data && (
+      {!stockDetails.isLoading && stockDetails.data && (
         <Container>
           <Row className='mb-5'>
             <Col sm='12' md='6' lg='6' className='mb-4'>
@@ -245,7 +238,7 @@ export default ({ match }) => {
           <Row>
             <Col>
               <Card small className="mb-4">
-                <CardBody className="p-0 pb-3">
+                <CardBody className={css(styles.table) + " p-0 pb-3"}>
                   <table className="table mb-0">
                     <thead>
                       <tr>
@@ -282,11 +275,15 @@ export default ({ match }) => {
           <Row>
             <Col>
               <Row>
-                <a href='https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-21/' target='_blank' rel='noopener noreferrer' >Instrinic value calculator</a>
+                <Col>
+                  <a href='https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-21/' target='_blank' rel='noopener noreferrer' >Instrinic value calculator</a>
+                </Col>
               </Row>
 
               <Row>
-                <a href='https://financialmodelingprep.com/developer/docs/' target='_blank' rel='noopener noreferrer' >Data providied by financialmodelingprep</a>
+                <Col>
+                  <a href='https://financialmodelingprep.com/developer/docs/' target='_blank' rel='noopener noreferrer' >Data providied by financialmodelingprep</a>
+                </Col>
               </Row>
 
             </Col>
