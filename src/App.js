@@ -9,7 +9,6 @@ const ReactQueryConfig = {
 export default () => (
   <div className="App">
     <ReactQueryConfigProvider config={ReactQueryConfig}>
-
       <Routes />
     </ReactQueryConfigProvider>
   </div>

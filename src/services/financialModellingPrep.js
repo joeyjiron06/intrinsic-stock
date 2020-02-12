@@ -134,8 +134,8 @@ export async function fetchStockDetails(tickerSymbol) {
   const companyName = companyProfile.companyName;
   const companyWebsite = companyProfile.website;
   const isIntrinsicPriceLessThanCurrentPrice = currentPrice < intrinsicPrice;
-  const isPriceToEarningsRatioFair = priceToEarningsRatio < 15;
-  const isPriceToBookValueRatioFair = priceToBookValueRatio < 1.5;
+  const isPriceToEarningsRatioFair = priceToEarningsRatio > 0 && priceToEarningsRatio < 15;
+  const isPriceToBookValueRatioFair = priceToBookValueRatio > 0 && priceToBookValueRatio < 1.5;
   const isDividendTrendingUpwards = isTrendingUpwards(dividends);
   const isBookValueTrendingUpwards = isTrendingUpwards(bookValues);
   const isEarningsTrendingUpwards = isTrendingUpwards(earningsPerShare);
