@@ -24,7 +24,7 @@ export default ({ history }) => {
     <Container className={css(styles.root)}>
       <Row>
         <Col>
-          <h1>
+          <h1 className='text-light'>
             <b>Intrinsic</b> Stock
           </h1>
         </Col>
