@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import { ReactComponent as Checkmark } from '../assets/check-circle.svg';
 import { ReactComponent as XMark } from '../assets/x-circle.svg';
 import { ReactComponent as Info } from '../assets/info.svg';
-import { fetchStockDetails } from '../services/financialModellingPrep';
+import { fetchStockDetails, calculateIntrinsicValue } from '../services/financialModellingPrep';
 
 const styles = StyleSheet.create({
   root: {
@@ -34,6 +34,7 @@ function SuccessIcon({ success }) {
 
 export default ({ match }) => {
   const [tickerSymbol] = useState(match.params.tickerSymbol);
+  const [bookValueIndex, setBookValueIndex] = useState(0);
   const stockDetails = useQuery(['stockDetails', { tickerSymbol }], () => fetchStockDetails(tickerSymbol));
 
   const [toolTips, setToolTips] = useState({
@@ -61,7 +62,7 @@ export default ({ match }) => {
     <Container className={css(styles.root)}>
       <Row>
         <Col className='text-center'>
-          <h1>
+          <h1 className='text-light'>
             <b>Intrinsic</b> Stock
           </h1>
         </Col>
@@ -86,17 +87,17 @@ export default ({ match }) => {
 
       {stockDetails.isLoading && (
         <Row>
-          <h3>Loading...</h3>
+          <h3 className='text-light'>Loading...</h3>
         </Row>
       )}
 
       {!stockDetails.isLoading && stockDetails.error && (
         <Fragment>
           <Row>
-            <h3>Errror</h3>
+            <h3 className='text-light'>Errror</h3>
           </Row>
           <Row>
-            <div>{stockDetails.error.toString()}</div>
+            <div className='text-light'>{stockDetails.error.toString()}</div>
           </Row>
         </Fragment>
       )}
@@ -108,16 +109,16 @@ export default ({ match }) => {
             <Col sm='12' md='6' lg='6' className='mb-4'>
               <Row>
                 <Col className='text-center'>
-                  <h5>Price</h5>
+                  <h5 className='text-light'>Price</h5>
                 </Col>
               </Row>
               <Row>
                 <Col className='text-center'>
-                  <h2>
+                  <h2 className='text-light'>
                     ${stockDetails.data.intrinsicPrice.toFixed(2)}
                   </h2>
 
-                  <div id='instrinsicPrice' >
+                  <div id='instrinsicPrice' className='text-light' >
                     intrinsic price <Info width={14} height={14} />
                   </div>
 
@@ -131,22 +132,22 @@ export default ({ match }) => {
                   </Tooltip>
                 </Col>
                 <Col className='text-center'>
-                  <h2>
+                  <h2 className='text-light'>
                     ${stockDetails.data.currentPrice.toFixed(2)}
                   </h2>
-                  <div>
+                  <div className='text-light'>
                     current price
                   </div>
                 </Col>
               </Row>
               <Row className='mt-3'>
                 <Col className='text-center'>
-                  <h5>Ratios</h5>
+                  <h5 className='text-light'>Ratios</h5>
                 </Col>
               </Row>
               <Row>
                 <Col className='text-center'>
-                  <h2>{stockDetails.data.priceToEarningsRatio.toFixed(1)}</h2>
+                  <h2 className='text-light'>{stockDetails.data.priceToEarningsRatio.toFixed(1)}</h2>
                   <div id='priceToEarningsRatio'>P/E Ratio <Info width={14} height={14} /></div>
                   <Tooltip
                     target="#priceToEarningsRatio"
@@ -158,7 +159,7 @@ export default ({ match }) => {
                   </Tooltip>
                 </Col>
                 <Col className='text-center'>
-                  <h2>{stockDetails.data.priceToBookValueRatio.toFixed(1)}</h2>
+                  <h2 className='text-light'>{stockDetails.data.priceToBookValueRatio.toFixed(1)}</h2>
                   <div>P/BV Ratio</div>
                 </Col>
               </Row>

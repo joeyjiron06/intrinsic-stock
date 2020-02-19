@@ -7,7 +7,7 @@ const ReactQueryConfig = {
 };
 
 export default () => (
-  <div className="App">
+  <div className="App bg-dark text-light">
     <ReactQueryConfigProvider config={ReactQueryConfig}>
       <Routes />
     </ReactQueryConfigProvider>

@@ -109,7 +109,7 @@ export default ({ styles: inStyles, onSelect, intialText }) => {
       <FormInput
         size="lg"
         placeholder="Find Stock"
-        className={css(styles.input)}
+        className={css(styles.input) + ' bg-dark text-light'}
         onKeyDown={onKeyDown}
         onChange={onChange}
         value={inputText || ''}
