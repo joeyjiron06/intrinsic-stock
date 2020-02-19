@@ -90,6 +90,22 @@ function isTrendingUpwards(array) {
   return true;
 }
 
+function findTrend(array) {
+  if (array.length <= 1 || array.every(value => value === array[0])) {
+    return 'flat';
+  }
+
+  if (array[0] < array[array.length - 1]) {
+    return 'down';
+  }
+
+  if (array[0] > array[array.length - 1]) {
+    return 'up';
+  }
+
+  return 'unknown';
+}
+
 
 export async function fetchStockDetails(tickerSymbol) {
   const [
@@ -136,6 +152,13 @@ export async function fetchStockDetails(tickerSymbol) {
   const isIntrinsicPriceLessThanCurrentPrice = currentPrice < intrinsicPrice;
   const isPriceToEarningsRatioFair = priceToEarningsRatio > 0 && priceToEarningsRatio < 15;
   const isPriceToBookValueRatioFair = priceToBookValueRatio > 0 && priceToBookValueRatio < 1.5;
+
+  const dividendTrend = findTrend(dividends);
+  const bookValueTrend = findTrend(bookValues);
+  const earningsTrend = findTrend(earningsPerShare);
+  const debtToEquityTrend = findTrend(debtToEquityRatios);
+
+  // trends
   const isDividendTrendingUpwards = isTrendingUpwards(dividends);
   const isBookValueTrendingUpwards = isTrendingUpwards(bookValues);
   const isEarningsTrendingUpwards = isTrendingUpwards(earningsPerShare);
@@ -156,5 +179,9 @@ export async function fetchStockDetails(tickerSymbol) {
     isBookValueTrendingUpwards,
     isEarningsTrendingUpwards,
     isDebtTrendingDownwards,
+    dividendTrend,
+    bookValueTrend,
+    earningsTrend,
+    debtToEquityTrend,
   };
 };

@@ -5,8 +5,6 @@ import { Container, Col, Row, Card, CardBody, Tooltip } from 'shards-react';
 import { useQuery } from 'react-query';
 import { ReactComponent as Checkmark } from '../assets/check-circle.svg';
 import { ReactComponent as XMark } from '../assets/x-circle.svg';
-import { ReactComponent as TrendingDown } from '../assets/trending-down.svg';
-import { ReactComponent as TrendingUp } from '../assets/trending-up.svg';
 import { ReactComponent as Info } from '../assets/info.svg';
 import { fetchStockDetails } from '../services/financialModellingPrep';
 
@@ -28,12 +26,6 @@ const styles = StyleSheet.create({
     marginRight: 10
   }
 });
-
-function TrendingIcon({ isTrendingUpwards, colors = ['green', 'red'] }) {
-  return isTrendingUpwards ? <TrendingUp stroke={colors[0]} className={css(styles.summaryIcon)} /> : <TrendingDown
-    className={css(styles.summaryIcon)}
-    stroke={colors[1]} />
-}
 
 function SuccessIcon({ success }) {
   return success ? <Checkmark stroke='green' className={css(styles.summaryIcon)} /> : <XMark stroke='red' className={css(styles.summaryIcon)} />
@@ -187,49 +179,89 @@ export default ({ match }) => {
               <Row>
                 <Col>
                   <SuccessIcon success={stockDetails.data.isPriceToEarningsRatioFair} />
-                  <span>{'P/E Ratio < 15'}</span>
+                  <span id='peRatio'>{'P/E Ratio < 15'}</span>
+                  {!stockDetails.data.isPriceToEarningsRatioFair && <Tooltip
+                    target="#peRatio"
+                    placement="bottom"
+                    open={toolTips.peRatio}
+                    toggle={toggleToolTip('peRatio')}
+                  >
+                    {'Warren Buffet likes to invest in companies that he can buy at a discount. This company\'s price to earnings raio indicates that it is not a discount.'}
+                  </Tooltip>}
                 </Col>
               </Row>
               <Row>
                 <Col>
                   <SuccessIcon success={stockDetails.data.isPriceToBookValueRatioFair} />
-                  <span>{'P/BV Ratio < 1.5'}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <TrendingIcon isTrendingUpwards={stockDetails.data.isDividendTrendingUpwards} />
-                  <span>{'Dividend per Share'}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <TrendingIcon isTrendingUpwards={stockDetails.data.isBookValueTrendingUpwards} />
-                  <span>{'Book Value'}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <TrendingIcon isTrendingUpwards={stockDetails.data.isEarningsTrendingUpwards} />
-                  <span>{'Earnings per Share'}</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <TrendingIcon isTrendingUpwards={!stockDetails.data.isDebtTrendingDownwards}
-                    colors={['red', 'green']}
-                  />
-                  <span id='debtToEquityRatio'>{'Debt/Equity Ratio'}</span>
+                  <span id='pbvRatio'>{'P/BV Ratio < 1.5'}</span>
 
-                  {!stockDetails.data.isDebtTrendingDownwards && <Tooltip
+                  {!stockDetails.data.isPriceToBookValueRatioFair && <Tooltip
+                    target="#pbvRatio"
+                    placement="bottom"
+                    open={toolTips.pbvRatio}
+                    toggle={toggleToolTip('pbvRatio')}
+                  >
+                    {'Warren Buffet likes to invest in companies that he can buy at a discount. This company\'s price to book value raio indicates that it is not a discount.'}
+                  </Tooltip>}
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.dividendTrend === 'up'} />
+                  <span id='dividendPerShare'>{'Dividend per Share trending up'}</span>
+
+                  {stockDetails.data.dividendTrend !== 'up' && <Tooltip
+                    target="#dividendPerShare"
+                    placement="bottom"
+                    open={toolTips.dividendPerShare}
+                    toggle={toggleToolTip('dividendPerShare')}
+                  >
+                    {stockDetails.data.dividendTrend === 'down' ? 'Dividends are trending downwards. Warren Buffet likes to invest in companys where dividends are increasing year over year.' : 'Dividends are flat. This means that that this company is not increasing dividend payments.'}
+                  </Tooltip>}
+
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.bookValueTrend === 'up'} />
+                  <span id='bookValue'>{'Book Value trending up'}</span>
+
+                  {stockDetails.data.bookValueTrend !== 'up' && <Tooltip
+                    target="#bookValue"
+                    placement="bottom"
+                    open={toolTips.bookValue}
+                    toggle={toggleToolTip('bookValue')}
+                  >
+                    {stockDetails.data.bookValueTrend === 'down' ? 'Earnings is trending downwards. Warren Buffet looks for promising companies who\'s shares are increasing. This alone is a reason not to invest in this company.' : 'Earnings values are flat over the years. It is recommended that earnings increase as it shows a promising profitablity.'}
+                  </Tooltip>}
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.earningsTrend === 'up'} />
+                  <span id='earningsPerShare'>{'Earnings per Share trending up'}</span>
+                  {stockDetails.data.earningsTrend === 'down' && <Tooltip
+                    target="#earningsPerShare"
+                    placement="bottom"
+                    open={toolTips.earningsPerShare}
+                    toggle={toggleToolTip('earningsPerShare')}
+                  >
+                    {'Earnings is trending downwards. Warren Buffet looks for promising companies who\'s shares are increasing. This alone is a reason not to invest in this company.'}
+                  </Tooltip>}
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <SuccessIcon success={stockDetails.data.debtToEquityTrend === 'down'} />
+                  <span id='debtToEquityRatio'>{'Debt/Equity Ratio trending down'}</span>
+                  {stockDetails.data.debtToEquityTrend !== 'down' && <Tooltip
                     target="#debtToEquityRatio"
                     placement="bottom"
                     open={toolTips.debtToEquityRatio}
                     toggle={toggleToolTip('debtToEquityRatio')}
                   >
-                    {'Debt is increasing which may be a sign that this company is not managed well. See Debt/Equity ratio table below for more info.'}
+                    {stockDetails.data.debtToEquityTrend === 'up' ? 'Debt is increasing which may be a sign that this company is not managed well. See Debt/Equity ratio table below for more info.' : 'Debt to equity ratio is flat. This could mean that the company is not increasing their debt, or there is not enough data in the system to determine debt to equity ratio. In any case, use the links below to find more details about the debt of the company.'}
                   </Tooltip>}
-
                 </Col>
               </Row>
             </Col>
@@ -237,10 +269,10 @@ export default ({ match }) => {
 
           <Row>
             <Col>
-              <Card small className="mb-4">
-                <CardBody className={css(styles.table) + " p-0 pb-3"}>
-                  <table className="table mb-0">
-                    <thead>
+              <Card small className="mb-4 overflow-hidden">
+                <CardBody className={css(styles.table) + " p-0 pb-3 bg-dark"}>
+                  <table className="table table-dark mb-0">
+                    <thead className='thead-dark'>
                       <tr>
                         <th scope="col" className="border-0">Year</th>
                         <th scope="col" className="border-0">Earnings per Share</th>
