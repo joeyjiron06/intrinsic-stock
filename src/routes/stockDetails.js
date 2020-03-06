@@ -34,8 +34,11 @@ function SuccessIcon({ success }) {
 
 export default ({ match }) => {
   const [tickerSymbol] = useState(match.params.tickerSymbol);
-  const [bookValueIndex, setBookValueIndex] = useState(0);
-  const stockDetails = useQuery(['stockDetails', { tickerSymbol }], () => fetchStockDetails(tickerSymbol));
+  const stockDetails = useQuery(['stockDetails'], () => fetchStockDetails(tickerSymbol), {
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
+  });
 
   const [toolTips, setToolTips] = useState({
     instrinsicPrice: false,
@@ -87,17 +90,21 @@ export default ({ match }) => {
 
       {stockDetails.isLoading && (
         <Row>
-          <h3 className='text-light'>Loading...</h3>
+          <h3 className='text-light mx-auto mt-4 text-center'>Loading...</h3>
         </Row>
       )}
 
       {!stockDetails.isLoading && stockDetails.error && (
         <Fragment>
           <Row>
-            <h3 className='text-light'>Errror</h3>
+            <Col>
+              <h3 className='text-danger mx-auto mt-4 text-center'>Error</h3>
+            </Col>
           </Row>
           <Row>
-            <div className='text-light'>{stockDetails.error.toString()}</div>
+            <Col>
+              <div className='text-danger text-center'>{stockDetails.error.message}</div>
+            </Col>
           </Row>
         </Fragment>
       )}
