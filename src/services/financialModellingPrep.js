@@ -1,46 +1,42 @@
+import axios from 'axios';
 import { fetch10YearFederalNoteYield } from './usTreasury';
-import { getOrFetch } from './cache';
-import { minutesFromNow, hoursFromNow } from './date';
+
 
 
 export async function fetchFinancialRatios(tickerSymbol) {
-  const data = await getOrFetch(
-    `https://financialmodelingprep.com/api/v3/financial-ratios/${tickerSymbol}`,
-    hoursFromNow(2)
+  const { data } = await axios.get(
+    `https://financialmodelingprep.com/api/v3/financial-ratios/${tickerSymbol}`
   );
   return data.ratios;
 }
 
 export async function fetchCompanyProfile(tickerSymbol) {
-  const data = await getOrFetch(
-    `https://financialmodelingprep.com/api/v3/company/profile/${tickerSymbol}`,
-    minutesFromNow(5)
+  const { data } = await axios.get(
+    `https://financialmodelingprep.com/api/v3/company/profile/${tickerSymbol}`
   );
   return data.profile;
 }
 
 export async function fetchKeyMetrics(tickerSymbol) {
-  const data = await getOrFetch(
-    `https://financialmodelingprep.com/api/v3/company-key-metrics/${tickerSymbol}`,
-    hoursFromNow(2)
+  const { data } = await axios.get(
+    `https://financialmodelingprep.com/api/v3/company-key-metrics/${tickerSymbol}`
   );
   return data.metrics;
 }
 
 export async function fetchIncomeStatement(tickerSymbol) {
-  const data = await getOrFetch(
-    `https://financialmodelingprep.com/api/v3/financials/income-statement/${tickerSymbol}`,
-    hoursFromNow(2)
+  const { data } = await axios.get(
+    `https://financialmodelingprep.com/api/v3/financials/income-statement/${tickerSymbol}`
   );
   return data.financials;
 }
 
 export async function searchTicker(tickerSymbolOrCompanyName) {
-  return getOrFetch(
+  { }
+  return axios.get(
     `https://financialmodelingprep.com/api/v3/search?query=${encodeURIComponent(
       tickerSymbolOrCompanyName
-    )}&limit=10`,
-    hoursFromNow(48)
+    )}&limit=10`
   );
 }
 
@@ -116,6 +112,12 @@ export async function fetchStockDetails(tickerSymbol) {
   ]);
 
   if (!companyProfile || !keyMetrics || !financialRatios || !incomeStatement) {
+    console.log({
+      companyProfile,
+      keyMetrics,
+      financialRatios,
+      incomeStatement
+    });
     throw new Error(`No finanical data found for ${tickerSymbol}. Please try a different symbol.`);
   }
 
