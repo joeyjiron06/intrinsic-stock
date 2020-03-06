@@ -32,12 +32,12 @@ export async function fetchIncomeStatement(tickerSymbol) {
 }
 
 export async function searchTicker(tickerSymbolOrCompanyName) {
-  { }
-  return axios.get(
+  const { data } = await axios.get(
     `https://financialmodelingprep.com/api/v3/search?query=${encodeURIComponent(
       tickerSymbolOrCompanyName
     )}&limit=10`
   );
+  return data;
 }
 
 
