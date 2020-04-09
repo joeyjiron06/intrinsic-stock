@@ -166,10 +166,53 @@ export async function fetchStockDetails(tickerSymbol) {
   return {
     companyName,
     companyWebsite,
-    intrinsicPrice,
-    currentPrice,
-    priceToEarningsRatio,
-    priceToBookValueRatio,
+    intrinsicPrice: {
+      value: '$' + intrinsicPrice.toFixed(2),
+      subtitle: 'intrinsic price',
+      id: 'intrinsic-price',
+      success: intrinsicPrice < currentPrice,
+      description: "Intrinsic price is the calculated price based on Warren Buffet's intrinsic value definition. Check out the links at the bottom of the page for more info."
+    },
+    currentPrice: {
+      value: '$' + currentPrice.toFixed(2),
+      id: 'current-price',
+      subtitle: 'current price',
+      success: intrinsicPrice < currentPrice,
+      description: "The current price as of " + new Date()
+    },
+    priceToEarningsRatio: {
+      value: priceToEarningsRatio.toFixed(2),
+      id: 'pe-ratio',
+      subtitle: 'P/E ratio',
+      success: priceToEarningsRatio < 15,
+      description: priceToEarningsRatio < 15 ? 'The price to earnings ratio is below the Warren Buffet recommendation of 15.' : 'The price to earnings ratio is above the Warren Buffet recommendation of 15'
+    },
+    priceToBookValueRatio: {
+      value: priceToBookValueRatio.toFixed(2),
+      id: 'pbv-ratio',
+      subtitle: 'P/BV ratio',
+      success: priceToBookValueRatio < 1.5,
+      description: " "
+    },
+
+    graphs: [
+      {
+        title: 'Earnings per share',
+        id: 'eps',
+        values: incomeStatement.map((statement) => ({
+          x: new Date(statement.date).getTime(),
+          y: Number(statement['EPS']) || 0
+        })),
+
+        description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understandable.  This chart should increase over time because it’s extremely important for determining future cash flows.',
+        link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/',
+        color: ''
+      }
+    ],
+
+
+
+
     listByYears,
     isIntrinsicPriceLessThanCurrentPrice,
     isPriceToEarningsRatioFair,

@@ -1,3 +1,7 @@
+body {
+  background-color: #171717;
+}
+
 #root {
   min-height: 100vh;
 }
