@@ -1,41 +1,69 @@
 import axios from 'axios';
 import { fetch10YearFederalNoteYield } from './usTreasury';
 
-
+const apikey = 'bac68223dd2347b094fa157d725593c9';
 
 export async function fetchFinancialRatios(tickerSymbol) {
   const { data } = await axios.get(
-    `https://financialmodelingprep.com/api/v3/financial-ratios/${tickerSymbol}`
+    `https://financialmodelingprep.com/api/v3/ratios/${tickerSymbol}`,
+    {
+      params: { 
+        // period: 'quarter',
+        apikey
+      }
+    }
   );
-  return data.ratios;
+  return data;
 }
 
 export async function fetchCompanyProfile(tickerSymbol) {
   const { data } = await axios.get(
-    `https://financialmodelingprep.com/api/v3/company/profile/${tickerSymbol}`
+    `https://financialmodelingprep.com/api/v3/company/profile/${tickerSymbol}`,
+    {
+      params: { 
+        apikey
+      }
+    }
   );
   return data.profile;
 }
 
 export async function fetchKeyMetrics(tickerSymbol) {
   const { data } = await axios.get(
-    `https://financialmodelingprep.com/api/v3/company-key-metrics/${tickerSymbol}`
+    `https://financialmodelingprep.com/api/v3/key-metrics/${tickerSymbol}`,
+    {
+      params: { 
+        // period: 'quarter',
+        apikey,
+      }
+    }
   );
-  return data.metrics;
+  return data;
 }
 
 export async function fetchIncomeStatement(tickerSymbol) {
   const { data } = await axios.get(
-    `https://financialmodelingprep.com/api/v3/financials/income-statement/${tickerSymbol}`
+    `https://financialmodelingprep.com/api/v3/financials/income-statement/${tickerSymbol}`,
+    {
+      params: {
+        // period: 'quarter',
+        apikey,
+      }
+    }
   );
   return data.financials;
 }
 
 export async function searchTicker(tickerSymbolOrCompanyName) {
   const { data } = await axios.get(
-    `https://financialmodelingprep.com/api/v3/search?query=${encodeURIComponent(
-      tickerSymbolOrCompanyName
-    )}&limit=10`
+    `https://financialmodelingprep.com/api/v3/search`,
+    {
+      params: {
+        query: tickerSymbolOrCompanyName,
+        limit: '10',
+        apikey
+      }
+    }
   );
   return data;
 }
@@ -121,6 +149,13 @@ export async function fetchStockDetails(tickerSymbol) {
     throw new Error(`No finanical data found for ${tickerSymbol}. Please try a different symbol.`);
   }
 
+  console.log({
+    companyProfile,
+    keyMetrics,
+    financialRatios,
+    incomeStatement
+  });
+
   const minLength = Math.min(incomeStatement.length, keyMetrics.length, financialRatios.length);
 
   const listByYears = Array(minLength).fill().map((_, index) => ({
@@ -128,7 +163,7 @@ export async function fetchStockDetails(tickerSymbol) {
     earningsPerShare: Number(incomeStatement[index]['EPS']) || 0,
     bookValue: Number(keyMetrics[index]['Book Value per Share']) || 0,
     dividend: Number(incomeStatement[index]['Dividend per Share']) || 0,
-    debtToEquityRatio: Number(financialRatios[index].debtRatios.debtEquityRatio) || 0,
+    debtToEquityRatio: Number(financialRatios[index].debtEquityRatio) || 0,
   }));
 
   const bookValues = listByYears.map(data => data.bookValue);

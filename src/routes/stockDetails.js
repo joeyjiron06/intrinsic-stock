@@ -1,4 +1,5 @@
 import React, { useState, Fragment } from 'react';
+import { useParams } from "react-router-dom";
 import { StyleSheet, css } from 'aphrodite/no-important';
 import TickerInput from '../components/tickerInput';
 import { Container, Col, Row, Card, CardBody, Tooltip } from 'shards-react';
@@ -32,8 +33,10 @@ function SuccessIcon({ success }) {
 }
 
 
-export default ({ match }) => {
-  const [tickerSymbol] = useState(match.params.tickerSymbol);
+export default () => {
+  const params = useParams();
+
+  const [tickerSymbol] = useState(params.tickerSymbol);
   const stockDetails = useQuery(['stockDetails'], () => fetchStockDetails(tickerSymbol), {
     retry: false,
     refetchOnWindowFocus: false,

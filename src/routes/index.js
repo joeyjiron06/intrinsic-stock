@@ -4,12 +4,17 @@ import Home from './home';
 import StockDetails from './stockDetails';
 
 export default () => (
-  <Router basename={process.env.PUBLIC_URL}>
+  <Router basename={process.env.PUBLIC_URL || ''}>
     <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/stock/:tickerSymbol" component={StockDetails} />
+      <Route exact path="/stock/:tickerSymbol" >
+        <StockDetails />
+      </Route>
+
+      <Route exact path="/" >
+        <Home />
+      </Route>
       {/* no match just redirect to login page */}
-      <Route component={Home} />
+      {/* <Route component={Home} /> */}
     </Switch>
   </Router>
 );
