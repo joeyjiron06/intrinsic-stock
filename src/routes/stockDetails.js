@@ -31,19 +31,21 @@ const styles = StyleSheet.create({
   priceContainer: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   charts: {
-    display:'block',
+    display:'flex',
+    flexDirection: 'row',
+    '@media (max-width: 990px)': {
+      flexDirection: 'column'
+    }
   },
   chart: {
-    flexGrow: 1,
-    flexShrink: 1,
-    border: 'solid 1px orange',
+    flexBasis: '50%',
     display:'inline-flex',
     flexDirection: 'column',
     alignItems: 'center',
-    maxWidth: '50%'
+    justifyContent: 'center',
   }
 });
 
@@ -57,7 +59,7 @@ function PriceText({title, subtitle, success, info}) {
   }
 
   return (
-    <Col className='text-center'>
+    <Col className='text-center mb-4'>
       <div className={css(styles.priceContainer)}>
         <h2 className='text-light mr-3 mb-0'>
           {title}

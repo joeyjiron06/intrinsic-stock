@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
   xAxis: {
     display: 'flex',
     width: '100%',
-    marginLeft: 20,
+    paddingLeft: 20,
+    paddingRight: 10,
     justifyContent:'space-between'
   },
   dataStrip: {

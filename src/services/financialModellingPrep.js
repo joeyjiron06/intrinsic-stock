@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getOrFetch } from './cache';
 
 const apikey = 'bac68223dd2347b094fa157d725593c9';
@@ -197,6 +196,7 @@ export async function fetchStockDetails(tickerSymbol) {
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-26/'
     },
   ];
+  
   return {
     companyName,
     companyWebsite,
