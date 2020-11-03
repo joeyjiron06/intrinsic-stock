@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { minutesFromNow } from './date';
+import { daysFromNow } from './date';
 
 function getJson(key) {
   const data = JSON.parse(localStorage.getItem(key));
@@ -15,12 +15,17 @@ function setJson(key, json) {
   return localStorage.setItem(key, JSON.stringify(json));
 }
 
-export async function getOrFetch(url, {expiration = minutesFromNow(10000), ...options}) {
-  let response = getJson(url);
+function serializeOptions(url, options) {
+  return `${url}-${JSON.stringify(options)}`
+}
+
+export async function getOrFetch(url, {expiration = daysFromNow(1), ...options}) {
+  const key = serializeOptions(url, options);
+  let response = getJson(key);
 
   if (!response) {
     response = await axios.get(url, options);
-    setJson(url, { data: response.data, expiration });
+    setJson(key, { data: response.data, expiration });
   }
 
   return response.data;
