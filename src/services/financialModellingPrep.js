@@ -136,8 +136,8 @@ export async function fetchStockDetails(tickerSymbol) {
   const operatingActivities = incomeStatements.map(statement => [new Date(statement.date), Number(statement['Operating Expenses']) || 0]);
 
   const currentPrice = companyProfile.price;
-  const priceToEarningsRatio = currentPrice / earningsPerShare[0][1];
-  const priceToBookValueRatio = currentPrice / bookValues[0][1];
+  const priceToEarningsRatio =earningsPerShare[0][1] > 0 ?  currentPrice / earningsPerShare[0][1] : 0;
+  const priceToBookValueRatio = bookValues[0][1] > 0 ? currentPrice / bookValues[0][1]: 0;
 
   const companyName = companyProfile.companyName;
   const companyWebsite = companyProfile.website;
