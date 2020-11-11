@@ -95,7 +95,8 @@ export default () => {
 
   const [tickerSymbol] = useState(params.tickerSymbol);
   const stockDetails = useQuery(['stockDetails'], () => fetchStockDetails(tickerSymbol), {
-    retry: false,
+    retry: 3,
+    retryDelay: 1000,
     refetchOnWindowFocus: false,
     refetchOnMount: false
   });

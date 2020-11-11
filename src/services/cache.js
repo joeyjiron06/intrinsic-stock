@@ -25,6 +25,10 @@ export async function getOrFetch(url, {expiration = daysFromNow(1), ...options})
 
   if (!response) {
     response = await axios.get(url, options);
+    if (response.data['Error Message']) {
+      throw new Error(response.data['Error Message']);
+    }
+
     setJson(key, { data: response.data, expiration });
   }
 
