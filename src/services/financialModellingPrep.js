@@ -150,49 +150,49 @@ export async function fetchStockDetails(tickerSymbol) {
       title: 'Earnings per Share',
       color: isTrendingUpwards(earningsPerShare) ? 'green' : 'red',
       data: earningsPerShare,
-      description: 'Warrent Buffet’s 3rd rule of investing  states that a company must be stable and understanable.  This chart should increase over time because it’s extremely important for determining future cash flows.',
+      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understandable.  This chart should increase over time because it’s extremely important for determining future cash flows.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
     },
     {
       title: 'Book Balue',
       color: isTrendingUpwards(bookValues) ? 'green' : 'red',
       data: bookValues,
-      description: 'Warrent Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This graph should increase over time. If the company pays a high dividend, the book value may grow at a slower rate. If the company pays no dividend, the book value should grow with the EPS each year.',
+      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This graph should increase over time. If the company pays a high dividend, the book value may grow at a slower rate. If the company pays no dividend, the book value should grow with the EPS each year.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
     },
     {
       title: 'Dividends',
       color: isTrendingUpwards(dividends) ? 'green' : 'red',
       data: dividends,
-      description: 'Warrent Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
+      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
     },
     {
       title: 'Return on Equity',
       color: isTrendingUpwards(returnOnEquity) ? 'green' : 'red',
       data: returnOnEquity,
-      description: 'Warrent Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
+      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
     },
     {
       title: 'Debt to Equity Ratio',
       color: !isTrendingUpwards(debtToEquity) ? 'green' : 'red',
       data: debtToEquity,
-      description: 'Warrent Buffet’s 1st rule of investing states that a company must be be managed by a vigilant leader. A vigilant leader manages debt well and the debt to equity ratio helps measure the health of the company in the long term. As a rule of thumb, the debt to equity ratio should be lower than 0.5. Look for stability trends within the debt/equity ratio to see how the company manages their long term risk.',
+      description: 'Warren Buffet’s 1st rule of investing states that a company must be be managed by a vigilant leader. A vigilant leader manages debt well and the debt to equity ratio helps measure the health of the company in the long term. As a rule of thumb, the debt to equity ratio should be lower than 0.5. Look for stability trends within the debt/equity ratio to see how the company manages their long term risk.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-18/'
     },
     {
       title: 'Operating Activities',
       color: isTrendingUpwards(operatingActivities) ? 'green' : 'red',
       data: operatingActivities,
-      description: 'TODO REWORD ME This is the cash that is produced by the company’s operations, and without that, the cash flow from investing and financing activities cannot be healthy. While the net income is a key number and is also included in the calculation of operating activities, many other factors influence how much cash the company is actually making. If you see a high positive cash flow from you operating cash it is typically a positive of a healthy business.',
+      description: 'TODO REWORD ME This is the money that is produced by the company’s operations. Typically, a healthy business will have a high positive cash flow from their operating cash.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-26/'
     },
     {
       title: 'Investing Activities',
       color: isTrendingUpwards(operatingActivities) ? 'green' : 'red',
       data: operatingActivities,
-      description: 'TODO REWORD ME This is the cash that is produced by the company’s operations, and without that, the cash flow from investing and financing activities cannot be healthy. While the net income is a key number and is also included in the calculation of operating activities, many other factors influence how much cash the company is actually making. If you see a high positive cash flow from you operating cash it is typically a positive of a healthy business.',
+      description: 'These values represent how much a company is using their money to re-investing in the company or invest in other companies to grow the business.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-26/'
     },
   ];
