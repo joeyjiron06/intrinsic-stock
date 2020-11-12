@@ -2,7 +2,7 @@
   "name": "intrinsic-stock",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://joeyjiron06.github.io/intrinsic-stock",
+  "homepage": "https://intrinsicvaluestock.com",
   "dependencies": {
     "@reduxjs/toolkit": "^1.2.3",
     "@testing-library/jest-dom": "^4.2.4",
