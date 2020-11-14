@@ -79,7 +79,7 @@ export default () => {
         <b style={{color: 'var(--green)'}}>Intrinsic</b> Stock
       </h1>
 
-      <p>Your stock picking journet starts here</p>
+      <p>Your stock picking journey starts here</p>
 
 
       <Row className={css(styles.row, styles.inputRow)}>
