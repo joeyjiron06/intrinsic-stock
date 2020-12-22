@@ -154,7 +154,7 @@ export default () => {
           </Row>
           <Row>
             <Col>
-              <div className='text-danger text-center'>{stockDetails.error.message}</div>
+              <div id="stock-details-error" className='text-danger text-center'>{stockDetails.error.message}</div>
             </Col>
           </Row>
         </Fragment>
