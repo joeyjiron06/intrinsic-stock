@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,oBACE,UACF,CAEA,MACE,gBACF","file":"main.631f9303.chunk.css","sourcesContent":["body, h1, h2, h3, h4, h5 {\n  color: white;\n}\n\n#root {\n  min-height: 100vh;\n}"]}
