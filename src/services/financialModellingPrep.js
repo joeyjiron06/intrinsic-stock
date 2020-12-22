@@ -157,22 +157,22 @@ export async function fetchStockDetails(tickerSymbol) {
       title: 'Book Balue',
       color: isTrendingUpwards(bookValues) ? 'green' : 'red',
       data: bookValues,
-      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This graph should increase over time. If the company pays a high dividend, the book value may grow at a slower rate. If the company pays no dividend, the book value should grow with the EPS each year.',
+      description: 'If the company pays a high dividend, the book value may grow at a slower rate. If the company pays no dividend, the book value should grow with the EPS each year.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
     },
     {
       title: 'Dividends',
       color: isTrendingUpwards(dividends) ? 'green' : 'red',
       data: dividends,
-      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
+      description: 'This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
     },
     {
       title: 'Return on Equity',
       color: isTrendingUpwards(returnOnEquity) ? 'green' : 'red',
       data: returnOnEquity,
-      description: 'Warren Buffet’s 3rd rule of investing  states that a company must be stable and understanable. This chart should have a flat to positive slope over time. If you see a drastic drop, it may represent a stock split for the company which will require further research. The dividend is taken from a portion of the EPS, the remainder goes to the book value.',
-      link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-20/'
+      description: 'Return on equity is a measure of how efficient a company is a generating profits. A good company will have this value increase over time.',
+      link: 'https://www.investopedia.com/terms/r/returnonequity.asp'
     },
     {
       title: 'Debt to Equity Ratio',
@@ -185,7 +185,7 @@ export async function fetchStockDetails(tickerSymbol) {
       title: 'Operating Activities',
       color: isTrendingUpwards(operatingActivities) ? 'green' : 'red',
       data: operatingActivities,
-      description: 'TODO REWORD ME This is the money that is produced by the company’s operations. Typically, a healthy business will have a high positive cash flow from their operating cash.',
+      description: 'This is the money that is produced by the company’s operations. Typically, a healthy business will have a high positive cash flow from their operating cash.',
       link: 'https://www.buffettsbooks.com/how-to-invest-in-stocks/intermediate-course/lesson-26/'
     },
     {

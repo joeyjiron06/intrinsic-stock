@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 });
 
 
-export default ({ label, datums, color, dataStrip, className }) => {
+export default ({ label, datums, color, className }) => {
   const series = useMemo(() => ({
     showPoints: false,
     type: 'area',

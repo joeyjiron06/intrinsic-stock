@@ -49,6 +49,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  companyName: {
+    display: 'inline-block',
+    marginTop: 12
   }
 });
 
@@ -124,7 +128,11 @@ export default () => {
           {stockDetails.data &&
             <Row>
               <Col className='text-center'>
-                <a href={stockDetails.data.companyWebsite} target='_blank' rel='noopener noreferrer' ><p>{stockDetails.data.companyName}</p></a>
+                <a href={stockDetails.data.companyWebsite} target='_blank' rel='noopener noreferrer' >
+                  <p className={css(styles.companyName)}>
+                    {stockDetails.data.companyName}
+                  </p>
+                </a>
               </Col>
             </Row>
           }
@@ -207,9 +215,13 @@ export default () => {
                   datums={chart.data} 
                   color={chart.color} 
                   label={chart.title}
+                  link={chart.link}
                   dataStrip={chart.dataStrip}
                   />
-                <p>{chart.description}</p>
+                <p>
+                  {chart.description}
+                  <a href={chart.link} target="_blank" rel="noopener noreferrer">&nbsp;Learn more</a>
+                  </p>
               </Col>
             ))}
 
