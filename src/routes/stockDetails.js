@@ -10,10 +10,13 @@ import { ReactComponent as XMark } from '../assets/x-circle.svg';
 import { ReactComponent as Info } from '../assets/info.svg';
 import { fetchStockDetails } from '../services/financialModellingPrep';
 import LineGraph from '../components/lineGraph';
+import Header from '../components/header';
+import Footer from '../components/footer';
 
 const styles = StyleSheet.create({
   root: {
-    padding: 40
+    padding: 40,
+    maxWidth: 960,
   },
   input: {
     display: 'block',
@@ -108,13 +111,8 @@ export default () => {
 
   return (
     <Container className={css(styles.root)}>
-      <Row>
-        <Col className='text-center'>
-          <h1 className='text-light'>
-            <b>Intrinsic</b> Stock
-          </h1>
-        </Col>
-      </Row>
+
+      <Header />
 
       <Row>
         <Col className={css(styles.tickerInput)}>
@@ -203,7 +201,7 @@ export default () => {
 
           <Row className={css(styles.charts)}>
             {stockDetails.data.charts.map(chart => (
-              <Col className={css(styles.chart)} sm="12" md="12" lg="12">
+              <Col className={css(styles.chart)} sm="12" md="12" lg="12" key={chart.title}>
                 <h4>{chart.title}</h4>
                 <LineGraph 
                   datums={chart.data} 
@@ -239,6 +237,8 @@ export default () => {
 
             </Col>
           </Row> */}
+
+          <Footer />
         </Container>
       )}
     </Container>

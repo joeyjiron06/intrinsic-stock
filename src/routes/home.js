@@ -6,16 +6,15 @@ import { useHistory } from 'react-router-dom';
 import { ReactComponent as Clock } from '../assets/clock.svg';
 import { ReactComponent as BarChart } from '../assets/bar-chart.svg';
 import { ReactComponent as ThumbsUp } from '../assets/thumbs-up.svg';
-import { ReactComponent as Logo } from '../assets/logo.svg';
 import ChartImg from '../assets/chart.png';
+import Header from '../components/header';
+import Footer from '../components/footer';
 
 const styles = StyleSheet.create({
   root: {
     textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    maxWidth: 760,
+    paddingTop: 40,
+    maxWidth: 960,
     minHeight: '100vh'
   },
   inputRow: {
@@ -23,10 +22,6 @@ const styles = StyleSheet.create({
   },
   row: {
     marginBottom: 60
-  },
-  header: {
-    marginTop: 20,
-    alignSelf: 'start'
   },
   iconBubble: {
     display: 'inline-block',
@@ -37,23 +32,6 @@ const styles = StyleSheet.create({
   },
   chartImage: {
     maxWidth: 250
-  },
-  footer: {
-    width: '100%',
-    flexGrow: 1,
-    alignItems: 'flex-end',
-    marginBottom: 60
-  },
-  footerLeft: {
-    flexGrow: 9,
-    flexShrink: 1,
-    textAlign: 'start'
-  },
-  footerRight: {
-    flexGrow: 3,
-    flexShrink: 1,
-    display: 'flex',
-    justifyContent: 'space-between'
   }
 });
 
@@ -68,16 +46,7 @@ export default () => {
 
   return (
     <Container className={css(styles.root)}>
-      <Row className={css(styles.row, styles.header)}>
-        <Col>
-          <Logo width={50} height={50}/>
-        </Col>
-      </Row>
-
-
-      <h1 className='text-light'>
-        <b style={{color: 'var(--green)'}}>Intrinsic</b> Stock
-      </h1>
+      <Header />
 
       <p>Your stock picking journey starts here</p>
 
@@ -163,18 +132,8 @@ export default () => {
         </Row>
       </Fade>
 
-      <Row className={css(styles.footer)}>
-        <div className={css(styles.footerLeft)}>
-          Made by <a href="http://joeyjiron06.github.io" style={{display:'inline-block'}} >Joey Jiron</a>
-        </div>
 
-        <div className={css(styles.footerRight)}>
-          <a href="http://joeyjiron06.github.io">Privacy Policy</a>
-          <a href="http://joeyjiron06.github.io">Terms of Service</a>
-          <a href="http://joeyjiron06.github.io">About</a>
-        </div>
-      </Row>
-      
+      <Footer />
 
     </Container>
   );
